@@ -1,71 +1,294 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
+<!-- DONT FORGET THE HEAD OF THE PAGE -->
 <head>
-<!-- Load d3.js -->
-<script src="https://d3js.org/d3.v4.js"></script>
-<!-- Create a div where the graph will take place -->
-<div id="my_dataviz"></div>
-<!-- Color scale -->
-<script src="https:/d/3js.org/d3-scale-chromatic.v1.min.js"></script>
+  <meta charset="utf-8">
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+
+  <script src="https://d3js.org/d3-color.v2.min.js"></script>
+<script src="https://d3js.org/d3-interpolate.v2.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v2.min.js"></script>
+
+
 </head>
-
-
+<!-- NOTHING SHOULD BE OUTSIDE THE BODY AFTER HERE -->
 <body>
-  
-<div class="title-holder">
-	<h1 class="title">Percentage and number of deaths in 5 year intervals</h1>
-  <p class="font">Uncheck labels to recalculate.</p>
-</div>
-
-<div id="chart"></div>
-
-<footer>
-  <ul class="footer">
-    <li><a href="https://www.start.umd.edu/gtd/" target="_blank">Data Source(GTD)</a></li>
     
-  </ul>
-</footer>
+      <!-- <h1 class="title">Number of deaths in 5 year intervals </h1> -->
+  <!-- <h1 class="title">Number of deaths in 5 year intervals </h1> -->
+  <div id="my-legend"></div>
+  <div class="title-holder">
+    <h1 class="title">Number of deaths in 5 year intervals due to Explosives/Chemicals/Firearms</h1>
+  <div id="chart"></div>
+  <footer>
+    <ul class="footer">
+      <li><a href="https://www.start.umd.edu/gtd/" target="_blank">Data Source (GTD)</a></li>  
+    </ul>
+  </footer>
 
 
-<style type="text/css">
-    body {
-  font-family: 'Open Sans', sans-serif;
-}
-.title-holder {
-  text-align: center;
-}
-.title {
-  font-family: 'Lato', sans-serif;
-}
-.subtitle {
-  font-size: 20px;
-}
-.font {
-  font-size: 18px;
+
+  <script>
+   
+    var width = 1400;
+    var height = 1000;
+    var data = [
+      {year: 1970 , category: 'a', value: 82},
+      {year: 1970 , category: 'b', value: 3},
+      {year: 1970 , category: 'c', value: 339},
+      {year: "1970-1975" , category: 'a', value: 1.079},
+      {year: "1970-1975", category: 'b', value: 16},
+      {year: "1970-1975", category: 'c', value: 1.690},
+      {year: "1975-1980" , category: 'a', value: 3.056},
+      {year: "1975-1980" , category: 'b', value: 21},
+      {year: "1975-1980" , category: 'c', value: 21},
+      {year: "1980-1985" , category: 'a', value: 5.303},
+      {year: "1980-1985" , category: 'b', value: 7},
+      {year: "1980-1985" , category: 'c', value: 6.576},
+      {year: "1985-1990", category: 'a', value: 7.359},
+      {year: "1985-1990" , category: 'b', value: 16},
+      {year: "1985-1990" , category: 'c', value: 8.202},
+      {year: "1990-1995" , category: 'a', value: 6.552},
+      {year: "1990-1995" , category: 'b', value: 31},
+      {year: "1990-1995" , category: 'c', value: 5.767},
+      {year: "1995-2000" , category: 'a', value: 3.133 },
+      {year: "1995-2000" , category: 'b', value: 36},
+      {year: "1995-2000", category: 'c', value: 4.477},
+      {year: "2000-2005" , category: 'a', value: 2.664},
+      {year: "2000-2005" , category: 'b', value: 40},
+      {year: "2000-2005" , category: 'c', value: 3.999},
+      {year: "2005-2010" , category: 'a', value: 6.025},
+      {year: "2005-2010" , category: 'b', value: 35},
+      {year: "2005-2010" , category: 'c', value: 11.538},
+      {year: "2010-2015" , category: 'a', value: 16.848},
+      {year: "2010-2015" , category: 'b', value: 71},
+      {year: "2010-2015" , category: 'c', value: 33.380},
+      {year: "2015-2019" , category: 'a', value: 12.940},
+      {year: "2015-2019" , category: 'b', value: 81},
+      {year: "2015-2019" , category: 'c', value: 20.925},
+  
+
+    ];
+
+  
+
+    // Radius of each donut
+    var donut_radii = {
+      'a': [0, 200], //20
+      'b': [205, 305],//25,45
+      'c': [310, 400] //50,70
+    }    
+
+    // The color scales to use in each donut red green blue
+    var colorScales = {
+      'a': d3.interpolateReds,
+      'b': d3.interpolateGreens,
+      'c': d3.interpolateOranges
+    };
+    
+    // Function that transforms our data to have angles that divides 
+    // a circle into evenly sized segments
+    var pie = d3.pie().value(1)
+    
+    // Append the SVG to the chart div, not just anywhere in the body.
+    // Viewbox makes 0, 0 the centre of the SVG
+    var svg = d3.select('#chart')
+      .append('svg')
+        .attr("width", width)
+        .attr("height", height)
+        .attr('viewBox', [-width/2, -height/2, width, height]);
+
+    // define tooltip
+       var tooltip = d3.select('#chart') // select element in the DOM with id 'chart'
+         .append('div') // append a div element to the element we've selected                                    
+        .attr('class', 'tooltip'); // add class 'tooltip' on the divs we just selected
+      tooltip.append('div') // add divs to the tooltip defined above                            
+      .attr('class', 'year'); // add class 'label' on the selection                         
+
+      tooltip.append('div') // add divs to the tooltip defined above                     
+          .attr('class', 'value'); // add class 'value' on the selection                  
+
+      tooltip.append('div') // add divs to the tooltip defined above  
+          .attr('class', 'percent'); // add class 'percent' on the selection  
+    
+
+
+
+    // Draws a single donut
+    function draw_donut(category) {
+       // Computes the minimum and maximum value over the data
+      var value_range = d3.extent(data.map(d => d.value));
+    
+      // Extract the rows for the given category
+      var arcs = pie(data.filter(d=>d.category == category)); //const
+      
+      // See how the data has changed? Now we can use the start and end angles!
+      console.log(arcs);
+
+      // A function that creates circular paths when we give it the data.
+      var arc = d3.arc()
+        .innerRadius(donut_radii[category][0]) 
+        .outerRadius(donut_radii[category][1]);
+      
+      // Maps the value of each segment in the slice to a color.
+      var color = d3.scaleSequential(colorScales[category]).domain(value_range);
+
+      // Append a group for each donut. Then join the arcs data we just created. 
+      // Set the color using the color scale and set the path using the arc function
+
+    var path = svg.append('g')          
+        .selectAll('path')
+        .data(arcs)
+        .join('path')
+         .attr("fill", d => color(d.data.value))
+         .attr("d", arc)
+          .on('mouseover', function(d) {
+            tooltip
+              .style('display', 'block')
+              .style('top', (d3.event.layerY + 10) + 'px') // always 10px below the cursor
+              .style('left', (d3.event.layerX + 10) + 'px'); // always 10px to the right of the mou
+            tooltip
+              .select('.year')
+                .html(d.data.year);
+                tooltip
+              .select('.value')
+
+                .html("No. of deaths "+d.data.value);    
+          })
+          
+
+      
+        
+
+
+          .on('mouseout', function(d) {
+            tooltip.style('display', 'none');
+          });
+        }
+
+
+
+
+
+    // Actually draw the data :)
+    draw_donut('a');
+    draw_donut('b');
+    draw_donut('c');
+
+
+// legend 
+
+var Legend = function(el, series) {
+  this.el = d3.select(el);
+  this.series = series;
+};
+
+Legend.prototype.update = function(series, animate) {
+  this.series = series;
+  
+  var item = this.el
+    .selectAll(".shart-legend-item")
+      .data(series);
+  
+  var exit = item.exit();
+  
+  var enter = item.enter()
+    .append("div")
+      .classed("shart-legend-item", true);
+  
+  var swatch = enter.append("span")
+    .classed("shart-swatch shart-legend-item-swatch", true)
+    .style("background-color", function(d) { return d.color });
+
+  var label = enter.append("span")
+    .classed("shart-legend-item-label", true)
+    .text(function(d) { return d.label });
+
+  var value = enter.append("span")
+    .classed("shart-legend-item-value", true)
+    .text(function(d) { return d.value });
+  
+  if (animate) {
+    exit
+      .transition()
+        .style('opacity', 0)
+        .remove();
+    
+    enter
+      .style('opacity', 0)
+      .transition()
+        .duration(1000)
+        .style('opacity', 1);
+    
+  } else {
+    exit
+      .remove();
+  }
+
+};
+
+Legend.prototype.draw = function() {
+  this.el
+    .classed("shart-legend", true);
+
+  this.update(this.series);
 }
 
-/* legend */
-.legend {
-  font-size: 14px;
-}
-rect {
-  cursor: pointer; 
-  stroke-width: 2;
-}
-rect.disabled {
-  fill: transparent !important;
-}
+var legend = new Legend('#my-legend', [
+  {color: "red",    label: "Firearms", value: "Inside pie"},
+  {color: "green",  label: "Chemicals",  value: "Nested Donut"},
+  {color: "orange", label: "Explosives",  value: "Outer Donut"}
+]);
 
-/* chart */
-#chart {
-  height: 800px;
-  margin: 0 auto;
-  position: relative;
-  display: block;
-  width: 1200px;
-}
+legend.draw();
 
-/* tooltip */
+setTimeout(function() {
+legend.update([
+  {color: "red",    label: "Firearms", value: "Inside pie"},
+  {color: "green",  label: "Chemicals",  value: "Nested Donut"},
+  {color: "orange", label: "Explosives",  value: "Outer Donut"}
+], true), 3000});
+
+
+  </script>
+</body>
+
+<style>
+  body{
+    background-color:rgb(214, 214, 214);
+  }
+
+  .footer {
+    padding-top: 50px;
+    text-align: center;
+    list-style-type: none;
+  }
+
+    /* chart */
+    #chart {
+    
+    margin: 0 auto;
+    position: relative;
+    display: block;
+    width: 1400px;
+  }
+  body {
+    font-family: 'Open Sans', sans-serif;
+  }
+  .title-holder {
+    text-align: center;
+  }
+  .title {
+    font-family: 'Lato', sans-serif;
+  }
+  .subtitle {
+    font-size: 20px;
+  }
+  .font {
+    font-size: 18px;
+  }
+
+
+  /* tooltip */
 .tooltip {
   background: #eee;
   box-shadow: 0 0 5px #999999;
@@ -76,176 +299,42 @@ rect.disabled {
   padding: 10px;
   position: absolute;
   text-align: center;
-  top: 95px;
-  width: 200px;
+  top: 500px;
+  width: 100px;
   z-index: 10;
 }
 
-.footer {
-  padding-top: 50px;
-  text-align: center;
-  list-style-type: none;
-}
-</style>
-
-<script>
-    // define data
-var dataset = [
-    {label: "1970", value: 3.484},
-    {label: "1970-1975", value: 9.091},
-    {label: "1975-1980", value: 14.408},
-    {label: "1980-1990", value: 17.973},
-    {label: "1990-1995", value: 16.291},
-    {label: "1995-2000", value: 10.409},
-    {label: "2000-2005", value: 7.701},
-    {label: "2005-2010", value: 20.353},
-    {label: "2010-2015", value: 57.734},
-    {label: "2015-2019", value: 43.739},
-  ];
-
-
-// chart dimensions
-var width = 1200;
-var height = 800;
-
-// a circle chart needs a radius
-var radius = Math.min(width, height) / 2;
-
-// legend dimensions
-var legendRectSize = 25; 
-var legendSpacing = 8; // 6 defines spacing between squares
-
-// define color scale
-var color = d3.scaleOrdinal(d3.schemeCategory20);
-// more color scales: https://bl.ocks.org/pstuffa/3393ff2711a53975040077b7453781a9
-
-var svg = d3.select('#chart') 
-  .append('svg') 
-  .attr('width', width) 
-  .attr('height', height) 
-  .append('g') 
-  .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')'); // our reference is now to the 'g' element. centerting the 'g' element to the svg element
-
-var arc = d3.arc()
-  .innerRadius(0) 
-  .outerRadius(radius); 
-
-var pie = d3.pie() // start and end angles of the segments
-  .value(function(d) { return d.value; }) 
-  .sort(null); 
-
-// define tooltip
-var tooltip = d3.select('#chart') 
-  .append('div')                                     
-  .attr('class', 'tooltip'); 
-
-tooltip.append('div')                          
-  .attr('class', 'label');                        
-
-tooltip.append('div')                      
-  .attr('class', 'value');               
-
-tooltip.append('div') 
-  .attr('class', 'percent'); 
-
-
-
-dataset.forEach(function(d) {
-  d.value = +d.value; 
-  d.enabled = true; 
-});
-
-// creating the chart
-var path = svg.selectAll('path') 
-  .data(pie(dataset)) 
-  .enter() 
-  .append('path') 
-  .attr('d', arc) 
-  .attr('fill', function(d) { return color(d.data.label); }) 
-  .each(function(d) { this._current - d; }); 
-
-// mouse event handlers are attached to path so they need to come after its definition
-path.on('mouseover', function(d) {  // when mouse enters div      
- var total = d3.sum(dataset.map(function(d) {       
-  return (d.enabled) ? d.value : 0;                                      
-  }));                                                      
- var percent = Math.round(1000 * d.data.value / total) / 10; // calculate percent
- tooltip.select('.label').html(d.data.label); // set current label           
- tooltip.select('.value').html('Deaths:' + d.data.value); // set current count            
- tooltip.select('.percent').html('Percentage:' + percent + '%'); // set percent calculated above          
- tooltip.style('display', 'block'); // set display                     
-});                                                           
-
-path.on('mouseout', function() {                        
-  tooltip.style('display', 'none'); 
- });
-
-path.on('mousemove', function(d) { // when mouse moves                  
-  tooltip.style('top', (d3.event.layerY + 10) + 'px') 
-    .style('left', (d3.event.layerX + 10) + 'px'); 
-  });
-
-// define legend
-var legend = svg.selectAll('.legend') // selecting elements with class 'legend'
-  .data(color.domain()) // refers to an array of labels from our dataset
-  .enter() 
-  .append('g') 
-  .attr('class', 'legend') 
-  .attr('transform', function(d, i) {                   
-    var height = legendRectSize + legendSpacing;     
-    var offset =  height * color.domain().length / 2; 
-    var horz = 18 * legendRectSize; 
-    var vert = i * height - offset;                
-      return 'translate(' + horz + ',' + vert + ')'; 
-   });
-
-// adding colored squares to legend
-legend.append('rect') // append rectangle squares to legend                                   
-  .attr('width', legendRectSize)                         
-  .attr('height', legendRectSize)                    
-  .style('fill', color) // each fill is passed a color
-  .style('stroke', color) 
-  .on('click', function(label) {
-    var rect = d3.select(this); 
-    var enabled = true; 
-    var totalEnabled = d3.sum(dataset.map(function(d) { // can't disable all options
-      return (d.enabled) ? 1 : 0; 
-    }));
-
-    if (rect.attr('class') === 'disabled') { // if class is disabled
-      rect.attr('class', ''); // remove class disabled
-    } else { // else
-      if (totalEnabled < 2) return; 
-      rect.attr('class', 'disabled'); 
-      enabled = false; // set enabled to false
-    }
-
-    pie.value(function(d) { 
-      if (d.label === label) d.enabled = enabled; 
-        return (d.enabled) ? d.value : 0; 
-    });
-
-    path = path.data(pie(dataset)); // update pie with new data
-
-    path.transition() // transition of redrawn pie
-      .duration(750) // 
-      .attrTween('d', function(d) { // 'd' specifies the d attribute that we'll be animating
-        var interpolate = d3.interpolate(this._current, d); 
-        this._current = interpolate(0); 
-        return function(t) {
-          return arc(interpolate(t));
-        };
-      });
-  });
-
-// adding text to legend
-legend.append('text')                                    
-  .attr('x', legendRectSize + legendSpacing)
-  .attr('y', legendRectSize - legendSpacing)
-  .text(function(d) { return d; }); // return label
-
-
-
+/* legend */
   
-</script>
-</body>
+
+/* body {
+  font-family: sans-serif;
+  font-weight: 100;
+  padding: 300px;
+} */
+
+.shart-swatch {
+  background: #444;
+  display: inline-block;
+  width: 17px; 
+  height: 17px;
+  vertical-align: baseline;
+  overflow: hidden;
+}
+
+.shart-legend-item {
+  margin: 0.2em 0;
+}
+
+.shart-legend-item-swatch {
+  margin-right: 0.5em;
+}
+
+
+
+.shart-legend-item-value {
+  font-weight: 600;
+}
+
+
+</style>
