@@ -30,42 +30,42 @@
 
   <script>
    
-    var width = 1400;
-    var height = 1000;
+    var width = 800;
+    var height = 800;
     var data = [
-      {year: 1970 , category: 'a', value: 82},
-      {year: 1970 , category: 'b', value: 3},
-      {year: 1970 , category: 'c', value: 339},
-      {year: "1970-1975" , category: 'a', value: 1.079},
-      {year: "1970-1975", category: 'b', value: 16},
-      {year: "1970-1975", category: 'c', value: "1.690"},
-      {year: "1975-1980" , category: 'a', value: 3.056},
-      {year: "1975-1980" , category: 'b', value: 21},
-      {year: "1975-1980" , category: 'c', value: 21},
-      {year: "1980-1985" , category: 'a', value: 5.303},
-      {year: "1980-1985" , category: 'b', value: 7},
-      {year: "1980-1985" , category: 'c', value: 6.576},
-      {year: "1985-1990", category: 'a', value: 7.359},
-      {year: "1985-1990" , category: 'b', value: 16},
-      {year: "1985-1990" , category: 'c', value: 8.202},
-      {year: "1990-1995" , category: 'a', value: 6.552},
-      {year: "1990-1995" , category: 'b', value: 31},
-      {year: "1990-1995" , category: 'c', value: 5.767},
-      {year: "1995-2000" , category: 'a', value: 3.133},
-      {year: "1995-2000" , category: 'b', value: 36},
-      {year: "1995-2000", category: 'c', value: 4.477},
-      {year: "2000-2005" , category: 'a', value: 2.664},
-      {year: "2000-2005" , category: 'b', value: 40},
-      {year: "2000-2005" , category: 'c', value: 3.999},
-      {year: "2005-2010" , category: 'a', value: 6.025},
-      {year: "2005-2010" , category: 'b', value: 35},
-      {year: "2005-2010" , category: 'c', value: 11.538},
-      {year: "2010-2015" , category: 'a', value: 16.848},
-      {year: "2010-2015" , category: 'b', value: 71},
-      {year: "2010-2015" , category: 'c', value: "33.380"},
-      {year: "2015-2019" , category: 'a', value: "12.940"},
-      {year: "2015-2019" , category: 'b', value: 81},
-      {year: "2015-2019" , category: 'c', value: 20.925},
+      {year: 1970 , category: 'Firearms', value: 82},
+      {year: 1970 , category: 'Chemicals', value: 3},
+      {year: 1970 , category: 'Explosives', value: 339},
+      {year: "1970-1975" , category: 'Firearms', value: 1.079},
+      {year: "1970-1975", category: 'Chemicals', value: 16},
+      {year: "1970-1975", category: 'Explosives', value: "1.690"},
+      {year: "1975-1980" , category: 'Firearms', value: 3.056},
+      {year: "1975-1980" , category: 'Chemicals', value: 21},
+      {year: "1975-1980" , category: 'Explosives', value: 21},
+      {year: "1980-1985" , category: 'Firearms', value: 5.303},
+      {year: "1980-1985" , category: 'Chemicals', value: 7},
+      {year: "1980-1985" , category: 'Explosives', value: 6.576},
+      {year: "1985-1990", category: 'Firearms', value: 7.359},
+      {year: "1985-1990" , category: 'Chemicals', value: 16},
+      {year: "1985-1990" , category: 'Explosives', value: 8.202},
+      {year: "1990-1995" , category: 'Firearms', value: 6.552},
+      {year: "1990-1995" , category: 'Chemicals', value: 31},
+      {year: "1990-1995" , category: 'Explosives', value: 5.767},
+      {year: "1995-2000" , category: 'Firearms', value: 3.133},
+      {year: "1995-2000" , category: 'Chemicals', value: 36},
+      {year: "1995-2000", category: 'Explosives', value: 4.477},
+      {year: "2000-2005" , category: 'Firearms', value: 2.664},
+      {year: "2000-2005" , category: 'Chemicals', value: 40},
+      {year: "2000-2005" , category: 'Explosives', value: 3.999},
+      {year: "2005-2010" , category: 'Firearms', value: 6.025},
+      {year: "2005-2010" , category: 'Chemicals', value: 35},
+      {year: "2005-2010" , category: 'Explosives', value: 11.538},
+      {year: "2010-2015" , category: 'Firearms', value: 16.848},
+      {year: "2010-2015" , category: 'Chemicals', value: 71},
+      {year: "2010-2015" , category: 'Explosives', value: "33.380"},
+      {year: "2015-2019" , category: 'Firearms', value: "12.940"},
+      {year: "2015-2019" , category: 'Chemicals', value: 81},
+      {year: "2015-2019" , category: 'Explosives', value: 20.925},
   
 
     ];
@@ -74,16 +74,16 @@
 
     // Radius of each donut
     var donut_radii = {
-      'a': [0, 200], //20
-      'b': [205, 305],//25,45
-      'c': [310, 400] //50,70
+      'Firearms': [0, 180], //20
+      'Chemicals': [185, 285],//25,45
+      'Explosives': [290, 390] //50,70
     }    
 
     // The color scales to use in each donut red green blue
     var colorScales = {
-      'a': d3.interpolateBlues,
-      'b': d3.interpolateGreens,
-      'c': d3.interpolateOranges
+      'Firearms': d3.interpolateBlues,
+      'Chemicals': d3.interpolateGreens,
+      'Explosives': d3.interpolateOranges
     };
     
     // Function that transforms our data to have angles that divides 
@@ -173,9 +173,9 @@
 
     // Actually draw the data :)
     
-    draw_donut('a');
-    draw_donut('b');
-    draw_donut('c');
+    draw_donut('Firearms');
+    draw_donut('Chemicals');
+    draw_donut('Explosives');
 
 
 // legend 
@@ -237,18 +237,18 @@ Legend.prototype.draw = function() {
 }
 
 var legend = new Legend('#my-legend', [
-  {color: colorScales['a'](0.5), label: "Firearms", value: ""},
-  {color:colorScales['b'](0.5), label: "Chemicals",  value: ""},
-  {color: colorScales['c'](0.4), label: "Explosives",  value: ""}
+  {color: colorScales['Firearms'](0.5), label: "Firearms", value: ""},
+  {color:colorScales['Chemicals'](0.5), label: "Chemicals",  value: ""},
+  {color: colorScales['Explosives'](0.4), label: "Explosives",  value: ""}
 ]);
 
 legend.draw();
 
 setTimeout(function() {
 legend.update([
-  {color: colorScales['a'](0.75),    label: "Firearms", value: ""},
-  {color: colorScales['b'](0.75),  label: "Chemicals",  value: ""},
-  {color: colorScales['c'](0.75), label: "Explosives",  value: ""}
+  {color: colorScales['Firearms'](0.75),    label: "Firearms", value: ""},
+  {color: colorScales['Chemicals'](0.75),  label: "Chemicals",  value: ""},
+  {color: colorScales['Explosives'](0.75), label: "Explosives",  value: ""}
 ], true), 3000});
 
 
@@ -261,7 +261,7 @@ legend.update([
   }
 
   .footer {
-    padding-top: 50px;
+    padding-top: 10px;
     text-align: center;
     list-style-type: none;
   }
@@ -272,7 +272,7 @@ legend.update([
     margin: 0 auto;
     position: relative;
     display: block;
-    width: 1400px;
+    width: 800px;
   }
   body {
     font-family: 'Open Sans', sans-serif;
@@ -319,8 +319,8 @@ legend.update([
     #my-legend {
     font-weight:bold;
     position:absolute;
-    top:550px;
-    left:1900px;
+    top:490px;
+    left:1770px;
 }
 
 
