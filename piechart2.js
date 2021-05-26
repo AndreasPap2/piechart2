@@ -1,3 +1,4 @@
+      
     var width = 800;
     var height = 800;
     var data = [
@@ -196,25 +197,3 @@ Legend.prototype.update = function(series, animate) {
   }
 
 };
-
-Legend.prototype.draw = function() {
-  this.el
-    .classed("shart-legend", true);
-
-  this.update(this.series);
-}
-
-var legend = new Legend('#my-legend', [
-  {color: colorScales['Firearms'](0.5), label: "Firearms", value: ""},
-  {color:colorScales['Chemicals'](0.5), label: "Chemicals",  value: ""},
-  {color: colorScales['Explosives'](0.4), label: "Explosives",  value: ""}
-]);
-
-legend.draw();
-
-setTimeout(function() {
-legend.update([
-  {color: colorScales['Firearms'](0.75),    label: "Firearms", value: ""},
-  {color: colorScales['Chemicals'](0.75),  label: "Chemicals",  value: ""},
-  {color: colorScales['Explosives'](0.75), label: "Explosives",  value: ""}
-], true), 3000});
