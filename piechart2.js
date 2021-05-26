@@ -6,7 +6,7 @@ var width = 1400;
       {year: 1970 , category: 'c', value: 339},
       {year: "1970-1975" , category: 'a', value: 1.079},
       {year: "1970-1975", category: 'b', value: 16},
-      {year: "1970-1975", category: 'c', value: 1.690},
+      {year: "1970-1975", category: 'c', value: "1.690"},
       {year: "1975-1980" , category: 'a', value: 3.056},
       {year: "1975-1980" , category: 'b', value: 21},
       {year: "1975-1980" , category: 'c', value: 21},
@@ -19,7 +19,7 @@ var width = 1400;
       {year: "1990-1995" , category: 'a', value: 6.552},
       {year: "1990-1995" , category: 'b', value: 31},
       {year: "1990-1995" , category: 'c', value: 5.767},
-      {year: "1995-2000" , category: 'a', value: 3.133 },
+      {year: "1995-2000" , category: 'a', value: 3.133},
       {year: "1995-2000" , category: 'b', value: 36},
       {year: "1995-2000", category: 'c', value: 4.477},
       {year: "2000-2005" , category: 'a', value: 2.664},
@@ -30,8 +30,8 @@ var width = 1400;
       {year: "2005-2010" , category: 'c', value: 11.538},
       {year: "2010-2015" , category: 'a', value: 16.848},
       {year: "2010-2015" , category: 'b', value: 71},
-      {year: "2010-2015" , category: 'c', value: 33.380},
-      {year: "2015-2019" , category: 'a', value: 12.940},
+      {year: "2010-2015" , category: 'c', value: "33.380"},
+      {year: "2015-2019" , category: 'a', value: "12.940"},
       {year: "2015-2019" , category: 'b', value: 81},
       {year: "2015-2019" , category: 'c', value: 20.925},
   
@@ -49,7 +49,7 @@ var width = 1400;
 
     // The color scales to use in each donut red green blue
     var colorScales = {
-      'a': d3.interpolateReds,
+      'a': d3.interpolateBlues,
       'b': d3.interpolateGreens,
       'c': d3.interpolateOranges
     };
@@ -85,10 +85,11 @@ var width = 1400;
     // Draws a single donut
     function draw_donut(category) {
        // Computes the minimum and maximum value over the data
-      var value_range = d3.extent(data.map(d => d.value));
-    
+       
+      var x=data.filter(d=>d.category == category)
       // Extract the rows for the given category
-      var arcs = pie(data.filter(d=>d.category == category)); //const
+      var arcs = pie(x); //const
+      var value_range = d3.extent(x.map(d => d.value));
       
       // See how the data has changed? Now we can use the start and end angles!
       console.log(arcs);
@@ -139,6 +140,7 @@ var width = 1400;
 
 
     // Actually draw the data :)
+    
     draw_donut('a');
     draw_donut('b');
     draw_donut('c');
@@ -203,16 +205,17 @@ Legend.prototype.draw = function() {
 }
 
 var legend = new Legend('#my-legend', [
-  {color: "red",    label: "Firearms", value: "Inside pie"},
-  {color: "green",  label: "Chemicals",  value: "Nested Donut"},
-  {color: "orange", label: "Explosives",  value: "Outer Donut"}
+  {color: colorScales['a'](0.5), label: "Firearms", value: ""},
+  {color:colorScales['b'](0.5), label: "Chemicals",  value: ""},
+  {color: colorScales['c'](0.4), label: "Explosives",  value: ""}
 ]);
 
 legend.draw();
 
 setTimeout(function() {
 legend.update([
-  {color: "red",    label: "Firearms", value: "Inside pie"},
-  {color: "green",  label: "Chemicals",  value: "Nested Donut"},
-  {color: "orange", label: "Explosives",  value: "Outer Donut"}
+  {color: colorScales['a'](0.75),    label: "Firearms", value: ""},
+  {color: colorScales['b'](0.75),  label: "Chemicals",  value: ""},
+  {color: colorScales['c'](0.75), label: "Explosives",  value: ""}
 ], true), 3000});
+
